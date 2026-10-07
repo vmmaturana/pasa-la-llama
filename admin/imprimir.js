@@ -15,7 +15,29 @@
     $('msg').innerHTML = text ? '<div class="msg msg--' + (kind || 'ok') + '">' + text + '</div>' : '';
   }
 
+  /* /admin/imprimir.html?demo=1 dibuja una hoja de muestra sin tocar la base,
+     para revisar la maquetación y la impresión sin gastar encendedores. */
+  function demo() {
+    data.event = { id: 'demo' };
+    data.families = [
+      { id: 'f1', name: 'Oráculo', color: '#ff2a1f' },
+      { id: 'f2', name: 'Carrusel', color: '#ff8a7a' }
+    ];
+    data.lighters = [];
+    for (var i = 1; i <= 24; i++) {
+      data.lighters.push({
+        id: 'd' + i, number: i, family_id: i % 2 ? 'f1' : 'f2',
+        code_plain: 'DEM' + (i % 10), token: 'demo-token-' + i + '-7Fq2xV9LmTnJ4pR8'
+      });
+    }
+    $('base').value = S.cfg.scanBase;
+    $('familyFilter').innerHTML = '<option value="">Todas</option>';
+    $('toN').value = 24;
+    render();
+  }
+
   async function boot() {
+    if (new URLSearchParams(window.location.search).has('demo')) { demo(); return; }
     if (!S.configured) {
       block('Falta conectar Supabase en <code>lib/supabase.js</code>.', 'warn');
       return;
@@ -76,10 +98,12 @@
     for (var i = 0; i < list.length; i++) {
       var l = list[i];
       var f = colors[l.family_id] || { name: '', color: '#000' };
-      var svg = await window.QRCode.toString(base + l.token, {
-        type: 'svg', margin: 0, errorCorrectionLevel: 'Q',
-        color: { dark: '#000000', light: '#ffffff' }
-      });
+
+      // Nivel de corrección Q: aguanta que el encendedor se raye o se ensucie.
+      var qr = window.qrcode(0, 'Q');
+      qr.addData(base + l.token);
+      qr.make();
+      var svg = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
 
       var div = document.createElement('div');
       div.className = 'label';
