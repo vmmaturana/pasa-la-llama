@@ -299,7 +299,10 @@
             }).join('') +
           '</select>' +
         '</td>' +
-        '<td><button class="btn-ghost btn--sm" type="button" data-regen="' + l.id + '">Nuevo QR</button></td>' +
+        // El enlace es el mismo que lleva el QR impreso: sirve para probar sin
+        // tener el encendedor en la mano.
+        '<td><a class="btn-ghost btn--sm" href="' + esc(S.cfg.scanBase + l.token) + '" target="_blank" rel="noopener">Abrir</a> ' +
+            '<button class="btn-ghost btn--sm" type="button" data-regen="' + l.id + '">Nuevo QR</button></td>' +
       '</tr>';
     }).join('');
   }
