@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tu encendedor · Pasa la Llama</title>
+<meta name="description" content="Entra a la línea de tu encendedor y mira por cuántas manos pasó.">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/styles.css">
+<style>
+/* Pantalla de una sola tarea, pensada para un teléfono con mala señal y una
+   mano ocupada. Nada de scroll innecesario ni adornos. */
+.q{max-width:460px;margin:0 auto;padding-inline:var(--gutter);padding-block:26px 64px}
+.q__brand{display:flex;align-items:center;gap:9px;margin-bottom:26px}
+.q__brand span{font-family:var(--font-display);font-weight:900;text-transform:uppercase;font-size:14px}
+.q__brand svg{color:var(--red)}
+.q h1{font-size:clamp(34px,10vw,52px);text-transform:uppercase;margin-bottom:12px}
+.q p.lead{color:var(--paper-soft);margin-bottom:24px}
+
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+label{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-soft)}
+input,select{font-family:var(--font-body);font-size:16px;color:var(--paper);background:#0b0909;
+  border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;width:100%}
+input:focus,select:focus{border-color:var(--red);outline:none}
+#code{font-family:var(--font-mono);font-size:26px;letter-spacing:.35em;text-align:center;text-transform:uppercase}
+.hint{font-size:12px;color:var(--paper-soft)}
+.check{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;font-size:13px;color:var(--paper-soft)}
+.check input{width:auto;margin-top:3px}
+.check a{color:var(--paper)}
+button[type="submit"]{width:100%;font-size:13px;padding:16px}
+.msg{border-left:3px solid var(--red);background:#0b0909;padding:12px 14px;font-size:14px;margin-bottom:18px}
+.msg--ok{border-color:#2f8f5b}
+
+/* La línea: una columna de personas, de la primera a la última. */
+.line{list-style:none;margin:22px 0 0;padding:0}
+.line li{display:grid;grid-template-columns:26px 1fr auto;gap:12px;padding-bottom:16px;position:relative}
+.line li::before{content:"";position:absolute;left:12px;top:20px;bottom:0;width:2px;background:var(--line)}
+.line li:last-child::before{display:none}
+.line .dot{width:12px;height:12px;border-radius:50%;margin:5px 0 0 6px;background:var(--red);position:relative;z-index:1}
+.line .you .dot{box-shadow:0 0 0 4px rgba(255,42,31,.25)}
+.line .who{font-weight:600}
+.line .where{font-size:13px;color:var(--paper-soft)}
+.line .when{font-family:var(--font-mono);font-size:12px;color:var(--paper-soft)}
+.tag{font-family:var(--font-mono);font-size:10px;background:var(--red);color:#120403;padding:1px 6px;margin-left:6px;vertical-align:2px}
+
+.card{border:1px solid var(--line);background:var(--smoke);padding:20px;margin-bottom:18px}
+.card h2{font-size:20px;text-transform:uppercase;margin-bottom:8px}
+.card .big{font-family:var(--font-display);font-weight:900;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.mine{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.mine li{font-family:var(--font-mono);font-size:12px;border:1px solid var(--line);padding:6px 10px}
+.is-hidden{display:none !important}
+</style>
+</head>
+<body>
+<main class="q">
+  <div class="q__brand">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <path d="M12 2c3 4 5 6 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9Z"></path>
+    </svg>
+    <span>Pasa la Llama</span>
+  </div>
+
+  <!-- Estado inicial mientras carga o si algo falta -->
+  <section id="intro">
+    <h1 id="introTitle">Un segundo…</h1>
+    <p class="lead" id="introText">Buscando tu encendedor.</p>
+  </section>
+
+  <!-- Registro -->
+  <section id="form" class="is-hidden">
+    <h1>Entra a la línea</h1>
+    <p class="lead" id="prevLine">Dinos quién eres y dónde lo encontraste.</p>
+    <div id="formMsg"></div>
+    <form id="scanForm" novalidate>
+      <div class="field">
+        <label for="code">Código impreso bajo el QR</label>
+        <input id="code" maxlength="4" autocomplete="off" autocapitalize="characters"
+               spellcheck="false" inputmode="text" placeholder="····" required>
+        <span class="hint">Cuatro caracteres. Están en el encendedor, no en la pantalla.</span>
+      </div>
+      <div class="field">
+        <label for="name">Tu nombre</label>
+        <input id="name" maxlength="24" autocomplete="given-name" placeholder="Como quieres que te vean" required>
+      </div>
+      <div class="field">
+        <label for="zone">¿Dónde lo encontraste?</label>
+        <select id="zone"></select>
+      </div>
+      <div class="field">
+        <label for="email">Email (opcional)</label>
+        <input id="email" type="email" autocomplete="email" placeholder="Para recuperar tu llama después">
+      </div>
+      <label class="check"><input type="checkbox" id="adult" required> Tengo 18 años o más.</label>
+      <label class="check"><input type="checkbox" id="consent"> Quiero saber de las próximas fiestas por email.</label>
+      <button class="btn btn--primary" type="submit" id="submit">Entrar a la línea</button>
+    </form>
+  </section>
+
+  <!-- Resultado -->
+  <section id="result" class="is-hidden">
+    <h1 id="resultTitle">Ya estás dentro</h1>
+    <p class="lead" id="resultText"></p>
+    <div class="card">
+      <h2 id="lighterName">Encendedor</h2>
+      <div class="big" id="position"></div>
+      <span class="hint" id="positionLabel"></span>
+      <ol class="line" id="lineList"></ol>
+    </div>
+    <div class="card">
+      <h2>Ahora pásalo</h2>
+      <p class="hint">Dáselo a alguien que te caiga bien. Cuando lo escanee, aparecerá debajo de ti en esta línea y van a poder hablar.</p>
+    </div>
+    <div class="card" id="mineCard">
+      <h2>Tus encendedores</h2>
+      <ul class="mine" id="mineList"></ul>
+    </div>
+    <p class="hint">Los chats de la fiesta, de tu familia y los directos se abren la noche del evento.</p>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="/lib/supabase.js"></script>
+<script src="/q.js"></script>
+</body>
+</html>
