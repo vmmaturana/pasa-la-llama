@@ -22,7 +22,7 @@
     }
     var session = (await S.client.auth.getSession()).data.session;
     if (!session) {
-      block('Entra primero en el <a href="/admin">panel</a>: las etiquetas solo las ve un administrador.', 'warn');
+      block('Entra primero en el <a href="/admin/index.html">panel</a>: las etiquetas solo las ve un administrador.', 'warn');
       return;
     }
 
@@ -44,7 +44,7 @@
     data.lighters = lig.data || [];
 
     if (!data.lighters.length) {
-      block('Todavía no hay encendedores. Genéralos en el <a href="/admin">panel</a>.', 'warn');
+      block('Todavía no hay encendedores. Genéralos en el <a href="/admin/index.html">panel</a>.', 'warn');
       return;
     }
     $('toN').value = data.lighters[data.lighters.length - 1].number;
