@@ -1,13 +1,13 @@
 -- =============================================================================
 -- Pasa la Llama · 04 · Datos iniciales
 --
--- ANTES DE EJECUTAR: cambia el email de la línea de abajo por el tuyo. Es el
--- que usarás para entrar al panel. Al iniciar sesión por primera vez con ese
--- email, quedas registrado como administrador automáticamente.
+-- El email de abajo es el que entra al panel: al iniciar sesión por primera vez
+-- con él, la cuenta queda registrada como administradora automáticamente.
+-- Para sumar a otra persona, repite el insert con su email.
 -- =============================================================================
 
 insert into public.admin_invites (email, event_id, role)
-values ('CAMBIA@ESTO.COM', null, 'owner')
+values ('vmmaturana@gmail.com', null, 'owner')
 on conflict (email) do nothing;
 
 -- -----------------------------------------------------------------------------
