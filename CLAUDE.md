@@ -40,10 +40,28 @@ Dos piezas en el mismo repo, por fases:
    `styles.css`, `script.js` son la fuente de verdad. Tema único oscuro, sin
    modo claro, con todos los colores explícitos. Secciones: hero, el árbol de
    muestra, cómo funciona, los tres chats y dudas.
-2. **Pasa la Llama** (siguiente). App de evento sobre Next.js (App Router) +
-   Supabase en Vercel: 100 encendedores con QR único, 4 familias, líneas de
-   traspaso y tres niveles de chat. El plan completo está en
-   `docs/arquitectura.md`.
+2. **App y panel** (en curso). **Sin Node y sin compilar**: el backend entero es
+   Supabase y las páginas le hablan desde el navegador.
+   - `supabase/01…04.sql` — esquema, funciones, reglas de acceso y datos
+     iniciales. Se ejecutan en orden en el editor SQL de Supabase y son la
+     fuente de verdad del backend.
+   - `lib/supabase.js` — URL y clave anon del proyecto, y los mensajes de error
+     en castellano.
+   - `admin/` — panel: evento, familias, zonas, encendedores y hoja de QR.
+   - Falta: `q.html` (registro al escanear), "mi línea", árbol y plano con datos
+     reales, y los tres chats.
+
+   El plan completo está en `docs/arquitectura.md`.
+
+### Claves
+
+La URL y la clave `anon` son **públicas por diseño** y van dentro del HTML: lo
+que protege los datos son las reglas de acceso de `supabase/03_rls.sql`. La
+clave `service_role` **nunca** entra al repo ni al navegador.
+
+Dos reglas al tocar el backend: la tabla `lighters` no se expone jamás a un
+invitado (tiene los tokens y los códigos), y todo permiso nuevo se prueba contra
+la API desde la consola del navegador, no solo por la interfaz.
 
 ### Previsualizar
 
@@ -63,5 +81,10 @@ al usuario que mire.
   crearlo (1200×630) antes de compartir el link.
 - La fecha y el lugar del evento aún no están definidos; la sección "Pasa la
   Llama" habla del "próximo evento" a propósito.
-- Node no está instalado en este equipo, así que la fase 2 (Next.js + Supabase)
-  no puede arrancar hasta instalarlo.
+- Node no está instalado en este equipo. Por eso el backend se construyó como
+  páginas estáticas contra Supabase en vez de Next.js. Si algún día se instala,
+  migrar es opcional y lo que gana es sesiones más largas en Safari y límites
+  antifraude en el firewall.
+- **El SQL de `supabase/` todavía no se ha ejecutado nunca**: está escrito pero
+  sin probar contra una base real, porque no hay Postgres en este equipo. La
+  primera corrida es también su primera prueba.

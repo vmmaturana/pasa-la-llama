@@ -1,5 +1,17 @@
 # Pasa la Llama — landing + arquitectura (Haus Of Wonder)
 
+> **Cambio de rumbo (7 oct 2026).** Este documento describe el diseño sobre
+> Next.js, pero el equipo no tiene Node instalado, así que la implementación va
+> por el camino sin compilar: **Supabase como backend completo y páginas
+> estáticas que le hablan desde el navegador**. El modelo de datos, las reglas
+> de acceso, el antifraude y las fases siguen siendo exactamente los de aquí;
+> lo único que cambia es que no hay servidor propio en medio. Lo construido
+> vive en `supabase/*.sql` y `admin/`.
+>
+> Dos consecuencias asumidas: la sesión del invitado dura unos 7 días en Safari
+> en vez de meses (se arregla vinculando email), y los límites antifraude viven
+> en la base de datos en vez del firewall de Vercel.
+
 ## Contexto
 
 El prototipo publicado (artifact `KHYEKbCyWXZ3CMHxG4GwYR`) ya validó la UX: 4 familias, 100 encendedores con QR único, línea de traspasos y tres niveles de chat (fiesta, familia, directo con solicitud). Es una sola página estática sin backend: los datos son de ejemplo y se pierden al recargar.

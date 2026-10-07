@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel · Pasa la Llama</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- Falta conectar Supabase -->
+<section class="login setup is-hidden" id="setup">
+  <h1>Falta conectar</h1>
+  <p>El panel todavía no sabe a qué base de datos hablar. Son cinco pasos, una sola vez:</p>
+  <ol>
+    <li>Crea un proyecto en <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a>, región São Paulo.</li>
+    <li>En <code>Settings → API</code>, copia la <code>URL</code> y la clave <code>anon</code>.</li>
+    <li>Pégalas en <code>lib/supabase.js</code>. La clave <code>service_role</code> no se toca.</li>
+    <li>En <code>Authentication → Providers</code>, activa <code>Email</code> y <code>Anonymous sign-ins</code>.</li>
+    <li>En el editor SQL, ejecuta en orden los archivos de <code>supabase/</code>, del 01 al 04. Antes de correr el 04, cambia el email del administrador por el tuyo.</li>
+  </ol>
+</section>
+
+<!-- Entrar -->
+<section class="login is-hidden" id="login">
+  <h1>Panel</h1>
+  <p>Te mandamos un enlace de acceso a tu correo. Sin contraseñas.</p>
+  <form id="loginForm">
+    <div class="field">
+      <label for="loginEmail">Tu email</label>
+      <input id="loginEmail" type="email" autocomplete="email" required placeholder="tu@correo.com">
+    </div>
+    <div class="actions">
+      <button class="btn btn--primary" type="submit" id="loginBtn">Enviar enlace</button>
+    </div>
+  </form>
+  <div id="loginMsg"></div>
+</section>
+
+<!-- Panel -->
+<main class="admin is-hidden" id="app">
+  <div class="admin__bar">
+    <a class="logo" href="../index.html">
+      <span class="logo__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M12 2c3 4 5 6 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9Z"></path>
+        </svg>
+      </span>
+      <span class="logo__text">Pasa la Llama · Panel</span>
+    </a>
+    <div class="admin__bar-right">
+      <span class="admin__who" id="who"></span>
+      <button class="btn-ghost btn--sm" type="button" id="logout">Salir</button>
+    </div>
+  </div>
+
+  <div id="globalMsg"></div>
+
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" data-tab="evento" aria-selected="true">Evento</button>
+    <button type="button" role="tab" data-tab="familias" aria-selected="false">Familias</button>
+    <button type="button" role="tab" data-tab="zonas" aria-selected="false">Zonas</button>
+    <button type="button" role="tab" data-tab="encendedores" aria-selected="false">Encendedores</button>
+  </div>
+
+  <!-- Evento -->
+  <section class="panel" id="tab-evento">
+    <h2>El evento</h2>
+    <p class="panel__hint">Mientras esté en borrador, nadie puede escanear. Pásalo a “en vivo” el día de la fiesta y a “cerrado” cuando termine: los chats quedan de solo lectura.</p>
+    <form id="eventForm">
+      <div class="form-grid">
+        <div class="field">
+          <label for="evName">Nombre</label>
+          <input id="evName" required maxlength="80">
+        </div>
+        <div class="field">
+          <label for="evVenue">Lugar</label>
+          <input id="evVenue" maxlength="120" placeholder="Por confirmar">
+        </div>
+        <div class="field">
+          <label for="evStarts">Empieza</label>
+          <input id="evStarts" type="datetime-local">
+        </div>
+        <div class="field">
+          <label for="evEnds">Termina</label>
+          <input id="evEnds" type="datetime-local">
+        </div>
+        <div class="field">
+          <label for="evCount">Cantidad de encendedores</label>
+          <input id="evCount" type="number" min="1" max="2000" step="1">
+        </div>
+        <div class="field">
+          <label for="evState">Estado</label>
+          <select id="evState">
+            <option value="draft">Borrador · nadie puede escanear</option>
+            <option value="live">En vivo · la experiencia está abierta</option>
+            <option value="closed">Cerrado · solo lectura</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="evMaxScans">Máximo de escaneos por encendedor</label>
+          <input id="evMaxScans" type="number" min="1" max="500" step="1">
+        </div>
+        <div class="field">
+          <label for="evMaxLighters">Máximo de encendedores por persona</label>
+          <input id="evMaxLighters" type="number" min="1" max="100" step="1">
+        </div>
+        <div class="field">
+          <label for="evSlow">Modo lento · segundos entre mensajes</label>
+          <input id="evSlow" type="number" min="0" max="300" step="1">
+        </div>
+        <div class="field field--wide">
+          <label>Chats abiertos</label>
+          <div class="switches">
+            <span class="switch"><input type="checkbox" id="evChatEvent"> <label for="evChatEvent" class="switch">Chat de la fiesta</label></span>
+            <span class="switch"><input type="checkbox" id="evChatFamily"> <label for="evChatFamily" class="switch">Chats de familia</label></span>
+            <span class="switch"><input type="checkbox" id="evDm"> <label for="evDm" class="switch">Chats directos</label></span>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn--primary" type="submit">Guardar</button>
+        <span id="eventMsg"></span>
+      </div>
+    </form>
+  </section>
+
+  <!-- Familias -->
+  <section class="panel is-hidden" id="tab-familias">
+    <h2>Familias</h2>
+    <p class="panel__hint">Las ramas del árbol. Cada encendedor pertenece a una, y cada familia tiene su chat. El color es el que se ve en el árbol y en las etiquetas impresas.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nombre</th><th style="width:90px">Color</th><th style="width:90px">Orden</th><th style="width:130px">Encendedores</th><th style="width:80px"></th></tr></thead>
+        <tbody id="familyRows"></tbody>
+      </table>
+    </div>
+    <div class="actions">
+      <button class="btn-ghost" type="button" id="addFamily">Agregar familia</button>
+      <button class="btn btn--primary" type="button" id="saveFamilies">Guardar cambios</button>
+      <span id="familyMsg"></span>
+    </div>
+  </section>
+
+  <!-- Zonas -->
+  <section class="panel is-hidden" id="tab-zonas">
+    <h2>Zonas del lugar</h2>
+    <p class="panel__hint">Dónde encontró cada persona su encendedor. Son las opciones que ve al registrarse y las salas del plano de la fiesta. Las medidas son las del plano; déjalas como están si no vas a dibujarlo.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nombre</th><th style="width:80px">Orden</th><th style="width:70px">X</th><th style="width:70px">Y</th><th style="width:70px">Ancho</th><th style="width:70px">Alto</th><th style="width:80px"></th></tr></thead>
+        <tbody id="zoneRows"></tbody>
+      </table>
+    </div>
+    <div class="actions">
+      <button class="btn-ghost" type="button" id="addZone">Agregar zona</button>
+      <button class="btn btn--primary" type="button" id="saveZones">Guardar cambios</button>
+      <span id="zoneMsg"></span>
+    </div>
+  </section>
+
+  <!-- Encendedores -->
+  <section class="panel is-hidden" id="tab-encendedores">
+    <h2>Encendedores</h2>
+    <p class="panel__hint">Cada uno lleva su QR único y un código de cuatro caracteres impreso debajo. Generar es seguro: completa lo que falte para llegar a la cantidad del evento y nunca duplica ni cambia los que ya existen.</p>
+    <div class="stats" id="lighterStats"></div>
+    <div class="actions">
+      <button class="btn btn--primary" type="button" id="generate">Generar los que falten</button>
+      <a class="btn-ghost" href="imprimir.html" id="printLink">Hoja para imprimir</a>
+      <span id="genMsg"></span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:60px">#</th><th>Familia</th><th style="width:90px">Código</th><th style="width:110px">Escaneos</th><th style="width:110px">Estado</th><th style="width:120px"></th></tr></thead>
+        <tbody id="lighterRows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../lib/supabase.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

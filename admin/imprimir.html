@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Etiquetas · Pasa la Llama</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="admin.css">
+<style>
+/* La hoja se ve en pantalla igual que impresa: fondo blanco y tinta negra,
+   porque es lo único que sobrevive a una impresora. */
+.sheet{background:#fff;color:#000;width:210mm;margin:0 auto;padding:8mm;
+       display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.label{border:.2mm dashed #bbb;padding:3mm 2mm;display:flex;flex-direction:column;
+       align-items:center;gap:1.5mm;break-inside:avoid;min-height:44mm;position:relative}
+.label__bar{position:absolute;left:0;top:0;bottom:0;width:1.6mm}
+.label__qr{width:26mm;height:26mm}
+.label__qr svg{width:100%;height:100%;display:block}
+.label__code{font-family:"Roboto Mono",monospace;font-weight:500;font-size:6.2mm;
+             letter-spacing:.09em;line-height:1}
+.label__meta{font-family:"Archivo",sans-serif;font-size:2.6mm;letter-spacing:.08em;
+             text-transform:uppercase;color:#444;text-align:center}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:18px}
+.toolbar .field{max-width:360px}
+
+@media print{
+  body{background:#fff;padding:0;margin:0}
+  .no-print{display:none !important}
+  .sheet{width:auto;padding:0;margin:0}
+  .label{border-color:#ddd}
+  @page{size:A4;margin:8mm}
+}
+</style>
+</head>
+<body>
+
+<div class="admin no-print">
+  <div class="admin__bar">
+    <a class="logo" href="index.html">
+      <span class="logo__text">← Volver al panel</span>
+    </a>
+  </div>
+
+  <section class="panel">
+    <h2>Etiquetas para imprimir</h2>
+    <p class="panel__hint">Veinticuatro por hoja A4. Imprime una de prueba y escanéala con tres teléfonos distintos antes de mandar la tirada completa: el QR no se puede cambiar una vez impreso.</p>
+    <div class="toolbar">
+      <div class="field">
+        <label for="base">Dirección que lleva el QR</label>
+        <input id="base" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="familyFilter">Familia</label>
+        <select id="familyFilter"><option value="">Todas</option></select>
+      </div>
+      <div class="field">
+        <label for="fromN">Desde el número</label>
+        <input id="fromN" type="number" min="1" value="1">
+      </div>
+      <div class="field">
+        <label for="toN">Hasta el número</label>
+        <input id="toN" type="number" min="1">
+      </div>
+      <button class="btn-ghost" type="button" id="apply">Actualizar</button>
+      <button class="btn btn--primary" type="button" id="print">Imprimir</button>
+    </div>
+    <div id="msg"></div>
+  </section>
+</div>
+
+<div class="sheet" id="sheet"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="../lib/supabase.js"></script>
+<script src="imprimir.js"></script>
+</body>
+</html>
