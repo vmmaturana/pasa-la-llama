@@ -8,8 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="../styles.css">
-<link rel="stylesheet" href="admin.css">
+<!-- Rutas absolutas: con cleanUrls, /admin/ se sirve como /admin y las rutas
+     relativas se resolverían contra la raíz del sitio. -->
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/admin/admin.css">
 </head>
 <body>
 
@@ -45,7 +47,7 @@
 <!-- Panel -->
 <main class="admin is-hidden" id="app">
   <div class="admin__bar">
-    <a class="logo" href="../index.html">
+    <a class="logo" href="/">
       <span class="logo__mark" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6">
           <path d="M12 2c3 4 5 6 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9Z"></path>
@@ -171,7 +173,7 @@
     <div class="stats" id="lighterStats"></div>
     <div class="actions">
       <button class="btn btn--primary" type="button" id="generate">Generar los que falten</button>
-      <a class="btn-ghost" href="imprimir.html" id="printLink">Hoja para imprimir</a>
+      <a class="btn-ghost" href="/admin/imprimir" id="printLink">Hoja para imprimir</a>
       <span id="genMsg"></span>
     </div>
     <div class="table-wrap">
@@ -184,7 +186,7 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="../lib/supabase.js"></script>
-<script src="admin.js"></script>
+<script src="/lib/supabase.js"></script>
+<script src="/admin/admin.js"></script>
 </body>
 </html>
